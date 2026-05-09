@@ -65,7 +65,9 @@
 
 </div>
 
- 
+<p align="center">
+  <img src="./hero-preview.png" alt="ZelEn platform preview" width="92%">
+</p>
 
 ---
 
@@ -111,6 +113,7 @@
 - [The Philosophy That Drove Us](#-the-philosophy-that-drove-us)
 - [The Five Worst Deployment Nightmares](#-the-five-worst-deployment-nightmares--and-how-zelen-kills-each-one)
 - [The Optional Paranoia Layers](#-the-optional-paranoia-layers)
+- [Optional MTE-PQ5 Governed Envelope](#-optional-mte-pq5-governed-envelope)
 - [The Vertical Integration](#%EF%B8%8F-the-vertical-integration)
 - [The Formal Security Guarantee](#-the-formal-security-guarantee)
 - [The Bottom Line](#-the-bottom-line)
@@ -459,6 +462,303 @@ graph TB
     class HYBRID indigo
     class NOTE violet
 ```
+
+---
+
+## 🧬 &nbsp; Optional MTE-PQ5 Governed Envelope
+
+> [!NOTE]
+> **MTE is an optional future ZelEn envelope layer.**  
+> ZelEn PQ5 protects the ciphertext.  
+> ZelEn MTE-PQ5 governs the encrypted object.
+
+MTE stands for **Morphological Topos Encryption**.
+
+It is not a replacement for ML-KEM, ML-DSA, AES-256-GCM, Argon2id, or the existing ZelEn fail-closed pipeline.
+
+It is an optional governed-object layer that sits **around** the already encrypted ZelEn payload.
+
+<div align="center">
+
+### `MTE IS NOT THE LOCK.  MTE IS THE MORPHIC ENVELOPE AROUND THE LOCKED OBJECT.`
+
+</div>
+
+The lock is still the proven ZelEn PQ5 cryptographic core:
+
+| Layer | Role |
+|---|---|
+| **ML-KEM-1024** | Quantum-safe key encapsulation |
+| **AES-256-GCM** | Authenticated payload encryption |
+| **ML-DSA-87** | Quantum-safe signing and verification |
+| **Argon2id** | Private-key passphrase protection |
+| **ZELC @ 0x7D** | Structural and forensic anchor |
+| **Fail-Closed Pipeline** | No plaintext before full authentication |
+
+MTE adds a new concept:
+
+> **Governed decryptability.**
+
+In standard encryption, possession of the private key is the event.
+
+In ZelEn MTE, possession of the private key is not enough.  
+The encrypted object must also be reconstructed through its private morphic datum:
+
+```text
+τ = (cover_selector, decoding_seed, local_section_map, reconstruction_policy)
+```
+
+That private datum is stored as:
+
+```text
+.ztau
+```
+
+So an MTE key set becomes:
+
+```text
+alice.zkey   ← private key bundle
+alice.zpub   ← public key bundle
+alice.ztau   ← private morphic reconstruction datum
+```
+
+> [!IMPORTANT]
+> A `.zkey` decrypts.  
+> A `.ztau` reconstructs.  
+> A policy decides whether reconstruction is allowed.
+
+---
+
+### 🧠 &nbsp; The Core Idea
+
+MTE is designed as a **post-encryption structural transform**.
+
+That means ZelEn first performs normal PQ5 encryption:
+
+```text
+Plaintext
+   ↓
+ML-KEM-1024
+   ↓
+Key schedule
+   ↓
+AES-256-GCM
+   ↓
+Authenticated ciphertext
+```
+
+Then MTE wraps the encrypted body:
+
+```text
+Authenticated ciphertext
+   ↓
+Split into morphic sections
+   ↓
+Apply τ-guided section mapping
+   ↓
+Store governed MTE envelope
+   ↓
+Write .zelen container
+```
+
+On decryption, the order reverses:
+
+```text
+.zelen container
+   ↓
+Verify ZELEN magic
+   ↓
+Verify ZELC @ 0x7D
+   ↓
+Load τ
+   ↓
+Reconstruct canonical ciphertext
+   ↓
+Run normal PQ5 decryption
+   ↓
+Release plaintext only if everything passes
+```
+
+If MTE reconstruction fails, the object fails closed before plaintext release.
+
+No partial decrypt.  
+No oracle leakage.  
+No secret-bearing error messages.
+
+---
+
+### 🧩 &nbsp; MTE-PQ5 File Model
+
+| File | Meaning | Shareable |
+|---|---|:--:|
+| `.zkey` | Private key bundle protected by Argon2id | ❌ No |
+| `.zpub` | Public key bundle for encryption and verification | ✅ Yes |
+| `.ztau` | Private MTE reconstruction datum | ❌ No |
+| `.zelen` | Encrypted governed object container | ✅ Shareable |
+| `.sig` | Detached ML-DSA signature | ✅ Shareable |
+
+A `.ztau` file is private.
+
+It must never be uploaded publicly, committed to GitHub, attached to support tickets, or shared with recipients unless governed reconstruction is explicitly intended.
+
+---
+
+### 🏛️ &nbsp; MTE-PQ5 Suite Reservation
+
+ZelEn already reserves the `0x0200+` suite range for MTE-style governed object security.
+
+| Suite ID | Name | KEM | Signature | Layer | Status |
+|:--:|:--|:--|:--|:--|:--:|
+| `0x0200` | **ZELEN-MTE-PQ5** | ML-KEM-1024 | ML-DSA-87 | MTE envelope over PQ5 | 🔬 Planned |
+| `0x0201` | ZELEN-MTE-PQ5-CERT | ML-KEM-1024 | ML-DSA-87 | MTE + certificate binding | 🔬 Planned |
+| `0x0202` | ZELEN-MTE-PQ5-SLH | ML-KEM-1024 | ML-DSA-87 + SLH-DSA-256 | MTE + backup hash signature | 🔬 Planned |
+
+---
+
+### 🔐 &nbsp; Planned CLI Shape
+
+Generate an MTE-PQ5 identity:
+
+```bash
+zelen keys generate \
+  --subject alice@example.com \
+  --name Alice \
+  --suite mte-pq5 \
+  --out alice
+```
+
+Expected output:
+
+```text
+alice.zkey
+alice.zpub
+alice.ztau
+```
+
+Encrypt with MTE:
+
+```bash
+zelen encrypt file \
+  --recipient alice.zpub \
+  --tau alice.ztau \
+  --suite mte-pq5 \
+  --input secret.pdf \
+  --out secret.mte.zelen
+```
+
+Decrypt with MTE:
+
+```bash
+ZELEN_PASS=mysecret \
+  zelen decrypt file \
+  --key alice.zkey \
+  --tau alice.ztau \
+  --passphrase-env ZELEN_PASS \
+  --input secret.mte.zelen \
+  --out recovered.pdf
+```
+
+Inspect an MTE container:
+
+```bash
+zelen inspect secret.mte.zelen
+```
+
+Expected safe metadata:
+
+```text
+Magic: ZELEN
+Suite: MTE-PQ5 0x0200
+Security tier: 5
+ZELC marker: present at 0x7D
+MTE envelope: present
+MTE sections: present
+Payload mode: morphic envelope
+Fail-closed: yes
+```
+
+---
+
+### 🧱 &nbsp; MTE Fail-Closed Rules
+
+An MTE-PQ5 container must reject decryption if any of these conditions occur:
+
+| Failure | Result |
+|---|---|
+| Missing `.ztau` | Reject |
+| Wrong `.ztau` | Reject |
+| Expired `.ztau` | Reject |
+| `.ztau` bound to different key | Reject |
+| MTE envelope missing | Reject |
+| MTE section map corrupted | Reject |
+| Section digest mismatch | Reject |
+| Wrong reconstruction policy | Reject |
+| Tampered morphic body | Reject |
+| Bad AES-GCM tag after reconstruction | Reject |
+
+The only safe outcome is:
+
+```text
+authentication failed
+```
+
+or:
+
+```text
+mte reconstruction failed
+```
+
+No plaintext should ever be released before the entire MTE + PQ5 pipeline passes.
+
+---
+
+### 🧭 &nbsp; MTE Decryption Pipeline
+
+```mermaid
+flowchart TD
+    A(["📦 .zelen MTE-PQ5 input"]) --> B["Verify ZELEN magic"]
+    B --> C["Verify ZELC @ 0x7D"]
+    C --> D["Validate suite 0x0200"]
+    D --> E["Require .ztau"]
+    E --> F["Validate τ binding<br/>fingerprint · suite · policy · expiry"]
+    F --> G["Decode morphic sections"]
+    G --> H["Reconstruct canonical ciphertext"]
+    H --> I["Run normal PQ5 decrypt path"]
+    I --> J["Verify header authentication"]
+    J --> K["AES-256-GCM authentication"]
+    K --> L(["✅ Plaintext"])
+
+    E -. missing .-> X1(["💀 Reject"])
+    F -. wrong τ .-> X2(["💀 Reject"])
+    G -. bad sections .-> X3(["💀 Reject"])
+    H -. reconstruction fail .-> X4(["💀 Reject"])
+    K -. tag fail .-> X5(["💀 Reject"])
+
+    classDef danger fill:#7f1d1d,color:#fff,stroke:#450a0a,stroke-width:2px
+    classDef safe   fill:#14532d,color:#fff,stroke:#052e16,stroke-width:2px
+    classDef gold   fill:#b45309,color:#fff,stroke:#78350f,stroke-width:2px
+    classDef blue   fill:#1e40af,color:#fff,stroke:#0a1230,stroke-width:2px
+    classDef teal   fill:#0f766e,color:#fff,stroke:#134e4a,stroke-width:2px
+
+    class A,B,C,D blue
+    class E,F,G,H gold
+    class I,J,K teal
+    class L safe
+    class X1,X2,X3,X4,X5 danger
+```
+
+---
+
+### 🎯 &nbsp; MTE in One Sentence
+
+<div align="center">
+
+### **ZelEn PQ5 protects ciphertext.**  
+### **ZelEn MTE-PQ5 governs the object.**
+
+</div>
+
+MTE introduces governed decryptability: the ciphertext remains protected by standard post-quantum encryption, but the encrypted object cannot reach the cryptographic decryption stage unless its morphic structure is reconstructed through the authorized `τ` datum.
 
 ---
 
@@ -1341,7 +1641,9 @@ All terms **negligible** in $\lambda$ at NIST Level 5.
 | `0x0100` | ZELEN-PQ3            | ML-KEM-768  | ML-DSA-65               | Level 3 | ✅ Enabled |
 | `0x0101` | **ZELEN-PQ5**        | **ML-KEM-1024** | **ML-DSA-87**       | **Level 5** | ⭐ **Default** |
 | `0x0102` | ZELEN-PQ5-SLH        | ML-KEM-1024 | ML-DSA-87 + SLH-DSA-256 | Level 5 | ✅ Enabled |
-| `0x0200+` | MTE Hybrid          | ML-KEM + X25519 | —                   | Level 5 | 🔜 Planned |
+| `0x0200` | **ZELEN-MTE-PQ5** | ML-KEM-1024 | ML-DSA-87 | Level 5 | 🔬 Planned |
+| `0x0201` | ZELEN-MTE-PQ5-CERT | ML-KEM-1024 | ML-DSA-87 | Level 5 | 🔬 Planned |
+| `0x0202` | ZELEN-MTE-PQ5-SLH | ML-KEM-1024 | ML-DSA-87 + SLH-DSA-256 | Level 5 | 🔬 Planned |
 
 ```mermaid
 graph LR
@@ -1357,13 +1659,19 @@ graph LR
         C1["ML-KEM-1024"] --> C2["ML-DSA-87<br/>+SLH-DSA-256"]
         C2 --> C3["NIST Level 5<br/>Hash-based sig backup<br/>Stateless · No state mgmt"]
     end
+    subgraph MTE["🧬 ZELEN-MTE-PQ5 · Suite 0x0200  PLANNED"]
+        D1["ML-KEM-1024"] --> D2["ML-DSA-87"]
+        D2 --> D3["MTE governed envelope<br/>τ reconstruction datum<br/>Object governance over PQ5"]
+    end
 
     classDef blue   fill:#1e40af,color:#fff,stroke:#0a1230,stroke-width:2px
     classDef green  fill:#14532d,color:#fff,stroke:#052e16,stroke-width:2px
     classDef violet fill:#4c1d95,color:#fff,stroke:#2e1065,stroke-width:2px
+    classDef gold   fill:#b45309,color:#fff,stroke:#78350f,stroke-width:2px
     class PQ3 blue
     class PQ5 green
     class SLH violet
+    class MTE gold
 ```
 
 ---
