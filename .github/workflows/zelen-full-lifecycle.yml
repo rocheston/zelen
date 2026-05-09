@@ -289,11 +289,11 @@ jobs:
             -w /data \
             -e ZELEN_PASS \
             rocheston/zelen:latest decrypt file \
-            --key mte-pipeline.zkey \
+            --key /data/mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
-            --tau mte-pipeline.ztau \
-            --input top-secret-mte.zelen \
-            --out recovered-mte.txt
+            --tau /data/mte-pipeline.ztau \
+            --input /data/top-secret-mte.zelen \
+            --out /data/recovered-mte.txt
 
       - name: "[MTE-PQ5] Verify MTE Round-Trip Integrity"
         run: |
@@ -323,10 +323,10 @@ jobs:
             -w /data \
             -e ZELEN_PASS \
             rocheston/zelen:latest decrypt text \
-            --key mte-pipeline.zkey \
+            --key /data/mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
-            --tau mte-pipeline.ztau \
-            --input message-mte.zelen
+            --tau /data/mte-pipeline.ztau \
+            --input /data/message-mte.zelen
 
       - name: "[MTE-PQ5] Wrong τ Datum Rejection Test"
         run: |
@@ -347,11 +347,11 @@ jobs:
             -w /data \
             -e ZELEN_PASS \
             rocheston/zelen:latest decrypt file \
-            --key mte-pipeline.zkey \
+            --key /data/mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
-            --tau wrong-tau.ztau \
-            --input top-secret-mte.zelen \
-            --out wrong-tau-output.txt
+            --tau /data/wrong-tau.ztau \
+            --input /data/top-secret-mte.zelen \
+            --out /data/wrong-tau-output.txt
           RESULT=$?
           set -e
           [ "$RESULT" -ne 0 ] || { echo "ERROR: Wrong tau should have been rejected."; exit 1; }
@@ -367,11 +367,11 @@ jobs:
             -w /data \
             -e ZELEN_PASS \
             rocheston/zelen:latest decrypt file \
-            --key mte-pipeline.zkey \
+            --key /data/mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
-            --tau mte-pipeline.ztau \
-            --input tampered-mte.zelen \
-            --out tampered-mte-output.txt
+            --tau /data/mte-pipeline.ztau \
+            --input /data/tampered-mte.zelen \
+            --out /data/tampered-mte-output.txt
           RESULT=$?
           set -e
           [ "$RESULT" -ne 0 ] || { echo "ERROR: Tampered MTE container should not decrypt."; exit 1; }
