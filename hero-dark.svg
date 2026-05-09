@@ -1,0 +1,85 @@
+<svg viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ZelEn Quantum Encryption">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0f1f"/>
+      <stop offset="50%" stop-color="#101935"/>
+      <stop offset="100%" stop-color="#1a1245"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#a855f7" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="text" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="50%" stop-color="#a5b4fc"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#22d3ee" stroke-opacity="0.06" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bg)"/>
+  <rect width="1200" height="360" fill="url(#grid)"/>
+  <ellipse cx="600" cy="180" rx="540" ry="220" fill="url(#glow)"/>
+
+  <!-- lattice points scattered -->
+  <g fill="#22d3ee">
+    <circle cx="80" cy="60" r="2" opacity="0.7"/>
+    <circle cx="160" cy="110" r="1.5" opacity="0.5"/>
+    <circle cx="240" cy="55" r="2" opacity="0.6"/>
+    <circle cx="320" cy="200" r="1.5" opacity="0.4"/>
+    <circle cx="100" cy="280" r="2" opacity="0.7"/>
+    <circle cx="200" cy="320" r="1.5" opacity="0.5"/>
+    <circle cx="980" cy="80" r="2" opacity="0.7"/>
+    <circle cx="1060" cy="150" r="1.5" opacity="0.5"/>
+    <circle cx="1120" cy="60" r="2" opacity="0.6"/>
+    <circle cx="900" cy="280" r="2" opacity="0.7"/>
+    <circle cx="1040" cy="310" r="1.5" opacity="0.5"/>
+    <circle cx="1130" cy="240" r="2" opacity="0.6"/>
+  </g>
+
+  <!-- lattice connections -->
+  <g stroke="#22d3ee" stroke-opacity="0.18" stroke-width="0.7" fill="none">
+    <line x1="80" y1="60" x2="160" y2="110"/>
+    <line x1="160" y1="110" x2="240" y2="55"/>
+    <line x1="160" y1="110" x2="320" y2="200"/>
+    <line x1="100" y1="280" x2="200" y2="320"/>
+    <line x1="200" y1="320" x2="320" y2="200"/>
+    <line x1="980" y1="80" x2="1060" y2="150"/>
+    <line x1="1060" y1="150" x2="1120" y2="60"/>
+    <line x1="900" y1="280" x2="1040" y2="310"/>
+    <line x1="1040" y1="310" x2="1130" y2="240"/>
+    <line x1="1060" y1="150" x2="1130" y2="240"/>
+  </g>
+
+  <!-- hexagon emblem on left -->
+  <g transform="translate(220, 180)">
+    <polygon points="0,-72 62,-36 62,36 0,72 -62,36 -62,-36"
+             fill="none" stroke="url(#text)" stroke-width="2.5" opacity="0.95"/>
+    <polygon points="0,-50 43,-25 43,25 0,50 -43,25 -43,-25"
+             fill="none" stroke="#22d3ee" stroke-width="1.2" opacity="0.55"/>
+    <polygon points="0,-28 24,-14 24,14 0,28 -24,14 -24,-14"
+             fill="#22d3ee" opacity="0.18"/>
+    <text x="0" y="8" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="34" font-weight="700" fill="#67e8f9" letter-spacing="-1">⬡</text>
+  </g>
+
+  <!-- main wordmark -->
+  <text x="640" y="170" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="92" font-weight="800" fill="url(#text)" letter-spacing="6">ZELEN</text>
+
+  <!-- tagline -->
+  <text x="640" y="208" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="20" font-weight="500" fill="#a5b4fc" letter-spacing="9">QUANTUM ENCRYPTION</text>
+
+  <!-- divider line -->
+  <line x1="640" y1="232" x2="1100" y2="232" stroke="#475569" stroke-width="0.7" opacity="0.7"/>
+
+  <!-- standards strip -->
+  <text x="640" y="262" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-size="13" font-weight="500" fill="#94a3b8" letter-spacing="3">FIPS 203  ·  FIPS 204  ·  NIST LEVEL 5</text>
+  <text x="640" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-size="13" font-weight="500" fill="#64748b" letter-spacing="3">ML-KEM-1024  ·  ML-DSA-87  ·  AES-256-GCM</text>
+</svg>
