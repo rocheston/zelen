@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
@@ -22,15 +21,10 @@ jobs:
       - name: Confirm ZelEn passphrase secret is available
         run: |
           if [ -z "$ZELEN_PASS" ]; then
-            echo "ERROR: ZELEN_PASS is empty."
-            echo "Your GitHub repository secret is named ROCHESTON."
-            echo "Make sure the workflow uses:"
-            echo "ZELEN_PASS: \${{ secrets.ROCHESTON }}"
+            echo "ERROR: ZELEN_PASS is empty. Make sure the secret ROCHESTON is set."
             exit 1
           fi
-
-          echo "ZELEN_PASS is available."
-          echo "Secret length: ${#ZELEN_PASS}"
+          echo "ZELEN_PASS is available (length: ${#ZELEN_PASS})"
 
       - name: Create Sensitive Artifact
         run: |
@@ -39,27 +33,20 @@ jobs:
           echo "This file will be encrypted, signed, verified, decrypted, and integrity checked." >> top-secret.txt
 
       - name: Pull ZelEn Container
-        run: |
-          docker pull rocheston/zelen:latest
+        run: docker pull rocheston/zelen:latest
 
       - name: Show ZelEn Version
-        run: |
-          docker run --rm rocheston/zelen:latest --version
+        run: docker run --rm rocheston/zelen:latest --version
 
       - name: Run ZelEn Doctor Diagnostic
-        run: |
-          echo "Running ZelEn doctor as diagnostic only."
-          echo "In GitHub Actions, /home/zelen/.zelen may not exist because each docker run is fresh."
-          echo "Doctor output is useful, but it should not stop this lifecycle workflow."
-          docker run --rm rocheston/zelen:latest doctor || true
+        run: docker run --rm rocheston/zelen:latest doctor || true
 
       - name: Run ZelEn Self-Test
-        run: |
-          docker run --rm rocheston/zelen:latest self-test
+        run: docker run --rm rocheston/zelen:latest self-test
 
       - name: Generate Quantum-Safe Keys
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -72,22 +59,9 @@ jobs:
 
       - name: Confirm Generated Key Files Exist
         run: |
-          echo "Checking generated key files..."
-
-          if [ ! -f pipeline.zpub ]; then
-            echo "ERROR: pipeline.zpub was not created."
-            ls -lah
-            exit 1
-          fi
-
-          if [ ! -f pipeline.zkey ]; then
-            echo "ERROR: pipeline.zkey was not created."
-            ls -lah
-            exit 1
-          fi
-
-          echo "Generated public key: pipeline.zpub"
-          echo "Generated private key: pipeline.zkey"
+          [ -f pipeline.zpub ] || { echo "ERROR: pipeline.zpub missing"; ls -lah; exit 1; }
+          [ -f pipeline.zkey ] || { echo "ERROR: pipeline.zkey missing"; ls -lah; exit 1; }
+          echo "Keys created:"
           ls -lah pipeline.zpub pipeline.zkey
 
       - name: Inspect Private Key
@@ -95,20 +69,18 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest keys inspect \
-            --key pipeline.zkey
+            rocheston/zelen:latest keys inspect --key pipeline.zkey
 
       - name: Inspect Public Key
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest keys inspect \
-            --key pipeline.zpub
+            rocheston/zelen:latest keys inspect --key pipeline.zpub
 
       - name: Encrypt File Artifact
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest encrypt file \
@@ -118,26 +90,19 @@ jobs:
 
       - name: Confirm Encrypted File Exists
         run: |
-          if [ ! -f top-secret.zelen ]; then
-            echo "ERROR: top-secret.zelen was not created."
-            ls -lah
-            exit 1
-          fi
-
-          echo "Encrypted file created:"
-          ls -lah top-secret.zelen
+          [ -f top-secret.zelen ] || { echo "ERROR: top-secret.zelen missing"; ls -lah; exit 1; }
+          echo "Encrypted file:"; ls -lah top-secret.zelen
 
       - name: Inspect Encrypted File Container
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest inspect \
-            --input top-secret.zelen
+            rocheston/zelen:latest inspect --input top-secret.zelen
 
       - name: Sign Encrypted File Container
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -149,14 +114,8 @@ jobs:
 
       - name: Confirm Signature Exists
         run: |
-          if [ ! -f top-secret.zelen.sig ]; then
-            echo "ERROR: top-secret.zelen.sig was not created."
-            ls -lah
-            exit 1
-          fi
-
-          echo "Signature file created:"
-          ls -lah top-secret.zelen.sig
+          [ -f top-secret.zelen.sig ] || { echo "ERROR: signature missing"; ls -lah; exit 1; }
+          echo "Signature file:"; ls -lah top-secret.zelen.sig
 
       - name: Verify ML-DSA Signature
         run: |
@@ -170,7 +129,7 @@ jobs:
 
       - name: Decrypt File Artifact
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -182,19 +141,14 @@ jobs:
 
       - name: Verify File Plaintext Integrity
         run: |
-          echo "Original file SHA256:"
-          sha256sum top-secret.txt
-
-          echo "Recovered file SHA256:"
-          sha256sum recovered-top-secret.txt
-
+          echo "Original:"; sha256sum top-secret.txt
+          echo "Recovered:"; sha256sum recovered-top-secret.txt
           diff top-secret.txt recovered-top-secret.txt
-
-          echo "ZelEn file encryption/decryption round-trip completed perfectly."
+          echo "File encryption/decryption round-trip: PASSED"
 
       - name: Encrypt Text Message
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest encrypt text \
@@ -207,12 +161,11 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest inspect \
-            --input message.zelen
+            rocheston/zelen:latest inspect --input message.zelen
 
       - name: Decrypt Text Message
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -223,7 +176,7 @@ jobs:
 
       - name: Create ASCII Armored Container
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest armor \
@@ -232,7 +185,7 @@ jobs:
 
       - name: Convert ASCII Armor Back To Binary
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest dearmor \
@@ -241,7 +194,7 @@ jobs:
 
       - name: Decrypt Restored Binary Container
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -254,17 +207,14 @@ jobs:
       - name: Verify Armor Round Trip
         run: |
           diff top-secret.txt recovered-from-armor.txt
-          echo "ZelEn armor/dearmor round-trip completed perfectly."
+          echo "Armor/dearmor round-trip: PASSED"
 
       - name: Run Tamper Detection Test
         run: |
           cp top-secret.zelen tampered.zelen
-
           printf 'X' | dd of=tampered.zelen bs=1 seek=20 count=1 conv=notrunc
-
           set +e
-
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
@@ -273,68 +223,20 @@ jobs:
             --passphrase-env ZELEN_PASS \
             --input tampered.zelen \
             --out tampered-output.txt
-
           RESULT=$?
-
           set -e
-
           if [ "$RESULT" -eq 0 ]; then
-            echo "ERROR: Tampered container decrypted successfully. This should not happen."
+            echo "ERROR: Tampered container should not have decrypted successfully."
             exit 1
           fi
-
-          echo "Tamper detection worked. ZelEn failed closed as expected."
-
-      - name: Show ZelEn CLI Examples
-        run: |
-          echo ""
-          echo "ZelEn CLI examples demonstrated by this workflow:"
-          echo ""
-          echo "Generate keys:"
-          echo './zelen keys generate --subject alice@example.com --name Alice --suite pq5 --out ~/Downloads/alice'
-          echo "Creates: alice.zpub and alice.zkey"
-          echo ""
-          echo "CI key generation:"
-          echo 'zelen keys generate --subject ci-pipeline@rocheston.com --name GitHub-Actions-Automation --suite pq5 --out pipeline --passphrase-env ZELEN_PASS'
-          echo ""
-          echo "Inspect public key:"
-          echo "zelen keys inspect --key alice.zpub"
-          echo ""
-          echo "Inspect private key:"
-          echo "zelen keys inspect --key alice.zkey"
-          echo ""
-          echo "Encrypt file:"
-          echo "zelen encrypt file --recipient alice.zpub --input secret.pdf --out secret.zelen"
-          echo ""
-          echo "Decrypt file:"
-          echo "zelen decrypt file --key alice.zkey --passphrase-env ZELEN_PASS --input secret.zelen --out recovered.pdf"
-          echo ""
-          echo "Encrypt text:"
-          echo 'zelen encrypt text --recipient alice.zpub --text "Hello, quantum world!" --out message.zelen'
-          echo ""
-          echo "Decrypt text:"
-          echo "zelen decrypt text --key alice.zkey --passphrase-env ZELEN_PASS --input message.zelen"
-          echo ""
-          echo "Sign file:"
-          echo "zelen sign --key alice.zkey --passphrase-env ZELEN_PASS --input report.pdf --out report.sig"
-          echo ""
-          echo "Verify signature:"
-          echo "zelen verify --key alice.zpub --input report.pdf --sig report.sig"
-          echo ""
-          echo "Armor:"
-          echo "zelen armor --input message.zelen --out message.zelen.asc"
-          echo ""
-          echo "Dearmor:"
-          echo "zelen dearmor --input message.zelen.asc --out message.zelen"
+          echo "Tamper detection: PASSED (failed closed as expected)"
 
       - name: List Generated ZelEn Artifacts
         run: |
-          echo "Generated files:"
-          ls -lah
-
-          echo ""
           echo "ZelEn lifecycle artifacts:"
-          ls -lah pipeline.zkey pipeline.zpub top-secret.zelen top-secret.zelen.sig message.zelen top-secret.zelen.asc top-secret-restored.zelen || true
+          ls -lah pipeline.zkey pipeline.zpub top-secret.zelen top-secret.zelen.sig \
+            message.zelen top-secret.zelen.asc top-secret-restored.zelen \
+            recovered-top-secret.txt recovered-from-armor.txt || true
 
       - name: Upload ZelEn Lifecycle Artifacts
         uses: actions/upload-artifact@v4
