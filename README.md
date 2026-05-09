@@ -65,9 +65,7 @@
 
 </div>
 
-<p align="center">
-  <img src="./hero-preview.png" alt="ZelEn platform preview" width="92%">
-</p>
+ 
 
 ---
 
