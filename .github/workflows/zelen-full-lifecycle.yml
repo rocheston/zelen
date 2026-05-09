@@ -67,7 +67,8 @@ jobs:
             --subject "ci-pipeline@rocheston.com" \
             --name "GitHub-Actions-Automation" \
             --suite pq5 \
-            --out pipeline
+            --out pipeline \
+            --passphrase-env ZELEN_PASS
 
       - name: Confirm Generated Key Files Exist
         run: |
@@ -142,6 +143,7 @@ jobs:
             -e ZELEN_PASS \
             rocheston/zelen:latest sign \
             --key pipeline.zkey \
+            --passphrase-env ZELEN_PASS \
             --input top-secret.zelen \
             --out top-secret.zelen.sig
 
@@ -292,6 +294,9 @@ jobs:
           echo './zelen keys generate --subject alice@example.com --name Alice --suite pq5 --out ~/Downloads/alice'
           echo "Creates: alice.zpub and alice.zkey"
           echo ""
+          echo "CI key generation:"
+          echo 'zelen keys generate --subject ci-pipeline@rocheston.com --name GitHub-Actions-Automation --suite pq5 --out pipeline --passphrase-env ZELEN_PASS'
+          echo ""
           echo "Inspect public key:"
           echo "zelen keys inspect --key alice.zpub"
           echo ""
@@ -311,7 +316,7 @@ jobs:
           echo "zelen decrypt text --key alice.zkey --passphrase-env ZELEN_PASS --input message.zelen"
           echo ""
           echo "Sign file:"
-          echo "zelen sign --key alice.zkey --input report.pdf --out report.sig"
+          echo "zelen sign --key alice.zkey --passphrase-env ZELEN_PASS --input report.pdf --out report.sig"
           echo ""
           echo "Verify signature:"
           echo "zelen verify --key alice.zpub --input report.pdf --sig report.sig"
