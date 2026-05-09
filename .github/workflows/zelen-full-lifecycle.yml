@@ -9,69 +9,88 @@ jobs:
   zelen-complete-pipeline:
     name: End-to-End Quantum Encryption
     runs-on: ubuntu-latest
-    
-    # In a real production environment, map your passphrase from GitHub Secrets:
-    # ZELEN_PASS: ${{ secrets.ZELEN_PASSPHRASE }}
+
     env:
-      ZELEN_PASS: "ci-automated-passphrase" 
+      ZELEN_PASS: ${{ secrets.ZELEN_PASSPHRASE }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Confirm secret is available
+        run: |
+          if [ -z "$ZELEN_PASS" ]; then
+            echo "ZELEN_PASS is empty. Check organization secret repository access."
+            exit 1
+          fi
+          echo "ZELEN_PASS is available."
 
       - name: Create Sensitive Artifact
         run: |
           echo "CONFIDENTIAL: Zelfire Platform Source Code" > top-secret.txt
 
       - name: Pull ZelEn Container
-        run: docker pull rocheston/zelen:latest
-
-      - name: 1️⃣ Generate Quantum-Safe Keys (ML-KEM-1024 + ML-DSA-87)
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
-            -e ZELEN_PASS=${{ env.ZELEN_PASS }} \
+          docker pull rocheston/zelen:latest
+
+      - name: 1️⃣ Generate Quantum-Safe Keys
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
+            -e ZELEN_PASS \
             rocheston/zelen:latest keys generate \
             --subject "ci-pipeline@rocheston.com" \
             --name "GitHub Actions Automation" \
-            --out pipeline
+            --out pipeline \
+            --passphrase-env ZELEN_PASS
 
       - name: 2️⃣ Encrypt the Artifact
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
             rocheston/zelen:latest encrypt file \
             --recipient pipeline.zpub \
             --input top-secret.txt \
             --out top-secret.zelen
 
       - name: 3️⃣ Inspect the Container & ZELC Anchor
-        # Proves the file was structured correctly with ZELC @ 0x7D
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
             rocheston/zelen:latest inspect \
             --input top-secret.zelen
 
       - name: 4️⃣ Sign the Encrypted Container
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
-            -e ZELEN_PASS=${{ env.ZELEN_PASS }} \
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
+            -e ZELEN_PASS \
             rocheston/zelen:latest sign \
             --key pipeline.zkey \
+            --passphrase-env ZELEN_PASS \
             --input top-secret.zelen \
             --out top-secret.zelen.sig
 
       - name: 5️⃣ Verify the ML-DSA Signature
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
             rocheston/zelen:latest verify \
             --key pipeline.zpub \
             --input top-secret.zelen \
             --sig top-secret.zelen.sig
 
       - name: 6️⃣ Decrypt the Artifact
-        # Fails closed if the header MAC or GCM tags are tampered with
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data -w /data \
-            -e ZELEN_PASS=${{ env.ZELEN_PASS }} \
+          docker run --rm \
+            -v "${{ github.workspace }}:/data" \
+            -w /data \
+            -e ZELEN_PASS \
             rocheston/zelen:latest decrypt file \
             --key pipeline.zkey \
             --passphrase-env ZELEN_PASS \
