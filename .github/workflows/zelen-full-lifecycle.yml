@@ -69,14 +69,14 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest keys inspect --key pipeline.zkey
+            rocheston/zelen:latest keys inspect pipeline.zkey
 
       - name: Inspect Public Key
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest keys inspect --key pipeline.zpub
+            rocheston/zelen:latest keys inspect pipeline.zpub
 
       - name: Encrypt File Artifact
         run: |
@@ -98,7 +98,7 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest inspect --input top-secret.zelen
+            rocheston/zelen:latest inspect top-secret.zelen
 
       - name: Sign Encrypted File Container
         run: |
@@ -123,9 +123,9 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest verify \
-            --key pipeline.zpub \
+            --pub-key pipeline.zpub \
             --input top-secret.zelen \
-            --sig top-secret.zelen.sig
+            --signature top-secret.zelen.sig
 
       - name: Decrypt File Artifact
         run: |
@@ -161,7 +161,7 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest inspect --input message.zelen
+            rocheston/zelen:latest inspect message.zelen
 
       - name: Decrypt Text Message
         run: |
@@ -179,8 +179,7 @@ jobs:
           docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest armor \
-            --input top-secret.zelen \
+            rocheston/zelen:latest armor top-secret.zelen \
             --out top-secret.zelen.asc
 
       - name: Convert ASCII Armor Back To Binary
@@ -188,8 +187,7 @@ jobs:
           docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            rocheston/zelen:latest dearmor \
-            --input top-secret.zelen.asc \
+            rocheston/zelen:latest dearmor top-secret.zelen.asc \
             --out top-secret-restored.zelen
 
       - name: Decrypt Restored Binary Container
