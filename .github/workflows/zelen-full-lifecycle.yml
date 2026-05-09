@@ -66,14 +66,14 @@ jobs:
 
       - name: Inspect Private Key
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest keys inspect pipeline.zkey
 
       - name: Inspect Public Key
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest keys inspect pipeline.zpub
@@ -95,7 +95,7 @@ jobs:
 
       - name: Inspect Encrypted File Container
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest inspect top-secret.zelen
@@ -119,7 +119,7 @@ jobs:
 
       - name: Verify ML-DSA Signature
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest verify \
@@ -158,7 +158,7 @@ jobs:
 
       - name: Inspect Encrypted Text Container
         run: |
-          docker run --rm \
+          docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
             rocheston/zelen:latest inspect message.zelen
