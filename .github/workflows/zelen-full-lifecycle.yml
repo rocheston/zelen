@@ -253,9 +253,7 @@ jobs:
           docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
             -w /data \
-            -e ZELEN_PASS \
-            rocheston/zelen:latest tau inspect mte-pipeline.ztau \
-            --passphrase-env ZELEN_PASS
+            rocheston/zelen:latest tau inspect mte-pipeline.ztau
 
       - name: "[MTE-PQ5] Encrypt File with MTE Governed Layer"
         run: |
