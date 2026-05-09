@@ -13,6 +13,7 @@ jobs:
 
     env:
       ZELEN_PASS: ${{ secrets.ROCHESTON }}
+      # ZELEN_TAU_PASS used only in encrypt steps (decrypt reuses ZELEN_PASS for tau)
       ZELEN_TAU_PASS: ${{ secrets.ROCHESTON }}
 
     steps:
@@ -287,12 +288,10 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
-            -e ZELEN_TAU_PASS \
             rocheston/zelen:latest decrypt file \
             --key mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
             --tau mte-pipeline.ztau \
-            --tau-passphrase-env ZELEN_TAU_PASS \
             --input top-secret-mte.zelen \
             --out recovered-mte.txt
 
@@ -323,12 +322,10 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
-            -e ZELEN_TAU_PASS \
             rocheston/zelen:latest decrypt text \
             --key mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
             --tau mte-pipeline.ztau \
-            --tau-passphrase-env ZELEN_TAU_PASS \
             --input message-mte.zelen
 
       - name: "[MTE-PQ5] Wrong τ Datum Rejection Test"
@@ -349,12 +346,10 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
-            -e ZELEN_TAU_PASS \
             rocheston/zelen:latest decrypt file \
             --key mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
             --tau wrong-tau.ztau \
-            --tau-passphrase-env ZELEN_TAU_PASS \
             --input top-secret-mte.zelen \
             --out wrong-tau-output.txt
           RESULT=$?
@@ -371,12 +366,10 @@ jobs:
             -v "${{ github.workspace }}:/data" \
             -w /data \
             -e ZELEN_PASS \
-            -e ZELEN_TAU_PASS \
             rocheston/zelen:latest decrypt file \
             --key mte-pipeline.zkey \
             --passphrase-env ZELEN_PASS \
             --tau mte-pipeline.ztau \
-            --tau-passphrase-env ZELEN_TAU_PASS \
             --input tampered-mte.zelen \
             --out tampered-mte-output.txt
           RESULT=$?
