@@ -2,13 +2,20 @@
   ============================================================================
    ZelEn Quantum Encryption — README
    Beautified layout with unified mermaid palette, hero banner, and
-   GitHub-native callouts. Hero SVGs encoded inline at the bottom of the file.
+   GitHub-native callouts. Hero SVGs are committed at repo root and referenced
+   via a <picture> element for theme-aware rendering.
   ============================================================================
 -->
 
 <div align="center">
 
-[![ZelEn — Quantum Encryption][hero]][zelen-site]
+<a href="https://zelen.rocheston.com">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./hero-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./hero-light.svg">
+    <img alt="ZelEn — Quantum Encryption" src="./hero-dark.svg" width="100%">
+  </picture>
+</a>
 
 # ⬡ &nbsp;ZelEn Quantum Encryption
 
@@ -25,8 +32,7 @@
 
 <!-- ─── Build & release row ───────────────────────────────────────────────── -->
 [![Version](https://img.shields.io/badge/version-1.2.0-1e40af?style=for-the-badge&labelColor=0a0e27)](https://github.com/rocheston/zelen/releases/tag/v1.2.0)
-[![CI](https://img.shields.io/github/actions/workflow/status/rocheston/zelen/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI&color=15803d&labelColor=0a0e27)](https://github.com/rocheston/zelen/actions/workflows/ci.yml)
-[![Lifecycle](https://img.shields.io/github/actions/workflow/status/rocheston/zelen/zelen-full-lifecycle.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Crypto+Lifecycle&color=1e40af&labelColor=0a0e27)](https://github.com/rocheston/zelen/actions/workflows/zelen-full-lifecycle.yml)
+[![Lifecycle](https://img.shields.io/github/actions/workflow/status/rocheston/zelen/zelen-full-lifecycle.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Crypto+Lifecycle&color=15803d&labelColor=0a0e27)](https://github.com/rocheston/zelen/actions/workflows/zelen-full-lifecycle.yml)
 [![Docker](https://img.shields.io/docker/pulls/rocheston/zelen?style=for-the-badge&logo=docker&logoColor=white&label=docker+pulls&color=0f766e&labelColor=0a0e27)](https://hub.docker.com/r/rocheston/zelen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-b45309?style=for-the-badge&labelColor=0a0e27)](LICENSE)
 
@@ -59,6 +65,10 @@
 
 </div>
 
+<p align="center">
+  <img src="./hero-preview.png" alt="ZelEn platform preview" width="92%">
+</p>
+
 ---
 
 ## ✨ &nbsp; What's Inside
@@ -87,6 +97,10 @@
 </table>
 
 </div>
+
+<p align="center">
+  <img src="./images-11.png" alt="ZelEn quantum-safe vault protecting object data" width="92%">
+</p>
 
 ---
 
@@ -181,6 +195,10 @@ And NIST has now handed the world the ultimate post-quantum cryptographic engine
 
 We have seen it. You have seen it. The post-mortems write themselves. ⚰️
 
+<p align="center">
+  <img src="./images-17.png" alt="Primitive misuse compared with the ZelEn one safe path" width="88%">
+</p>
+
 ```mermaid
 flowchart TD
     Dev["👨‍💻 Developer uses raw PQC primitives"] --> Q1{"Correctly wires<br/>KEM + KDF + AEAD?"}
@@ -237,6 +255,10 @@ That is the entire philosophy in one sentence. **Read it again. Tape it to your 
 
 We did NOT invent new cryptographic math. We are not arrogant enough to think we can out-design lattices that have survived a decade of global peer review. We took the math that NIST and the world's best cryptographers have already vetted — and we built the **definitive, governed, misuse-resistant object-security architecture** around it.
 
+<p align="center">
+  <img src="./images-1.png" alt="ZelEn armored protocol around NIST ML-KEM and ML-DSA engines" width="78%">
+</p>
+
 This was not a weekend project. This was **months** of grinding. ⚙️
 
 Months of designing. Months of tearing architectures apart and rebuilding them. Arguing about KDF labels at 2am. Stress-testing failure modes. Reading FIPS specifications until our eyes bled. Drawing byte maps on whiteboards. Erasing them. Drawing them again.
@@ -285,6 +307,10 @@ graph LR
 
 Cross-context key reuse? **Mathematically impossible.** Developers don't wire — ZelEn wires. 🔥
 
+<p align="center">
+  <img src="./images-5.png" alt="Encrypt with ZelEn using one safe developer-ready path" width="84%">
+</p>
+
 ---
 
 ### 2️⃣ &nbsp; Nightmare: Nonce Reuse
@@ -330,6 +356,10 @@ graph LR
 
 **The header and the payload are MARRIED. You cannot divorce them. 🛑**
 
+<p align="center">
+  <img src="./images-4.png" alt="ZelEn header authentication tag binds header and payload and rejects tampering" width="86%">
+</p>
+
 ---
 
 ### 4️⃣ &nbsp; Nightmare: Identity Confusion & the PKI Mess
@@ -355,6 +385,10 @@ graph LR
                             via ML-DSA signature
                             Subject · Domain · Metadata · Expiry
 ```
+
+<p align="center">
+  <img src="./images-8.png" alt="ZelEn public keys and private keys as protected growth" width="86%">
+</p>
 
 ---
 
@@ -392,6 +426,15 @@ graph LR
 ```
 
 **Months. We spent MONTHS getting that byte map right. Because the header is the FIRST line of defense AND the FIRST signal to your security stack.**
+
+<table>
+<tr>
+<td align="center" width="100%">
+  <img src="./images-9.png" alt="ZELC anchor visibility for DLP SIEM and IDS" width="88%"><br/>
+  <sub><b>Security-stack visibility</b> — the ZELC anchor makes encrypted objects classifiable.</sub>
+</td>
+</tr>
+</table>
 
 ---
 
@@ -553,9 +596,17 @@ mindmap
 
 </div>
 
+<p align="center">
+  <img src="./images-18.png" alt="Harvest today risk compared with data protected by ZelEn" width="88%">
+</p>
+
 ---
 
 ## 🌌 &nbsp; The Quantum Threat Timeline
+
+<p align="center">
+  <img src="./images-6.png" alt="ZelEn PQ5 bridge through quantum storm while RSA and ECC face classical risk" width="90%">
+</p>
 
 ```mermaid
 timeline
@@ -778,6 +829,10 @@ pie title ZelEn PQ5 Cryptographic Operations by Purpose
 
 ## 🌌 &nbsp; The Quantum Threat Model
 
+<p align="center">
+  <img src="./images-10.png" alt="PQ5 lattice-hardness protection against a quantum adversary" width="86%">
+</p>
+
 ```mermaid
 quadrantChart
     title Cryptographic Algorithm Vulnerability Matrix
@@ -800,6 +855,10 @@ quadrantChart
 ---
 
 ## 📦 &nbsp; The `.zelen` Binary Container — Byte Map
+
+<p align="center">
+  <img src="./images-20.png" alt=".zelen encrypted container header payload signature and ZELC anchor" width="88%">
+</p>
 
 ```mermaid
 graph LR
@@ -958,6 +1017,10 @@ flowchart LR
 ---
 
 ### 🔐 &nbsp; Key Management
+
+<p align="center">
+  <img src="./images-16.png" alt=".zkey private protected and .zpub public share freely" width="86%">
+</p>
 
 ```bash
 # Generate a PQ5 key pair (ML-KEM-1024 + ML-DSA-87) — default suite
@@ -1119,6 +1182,19 @@ zelen playground --port 9000 --no-open
 
 ### 🤝 &nbsp; Complete Alice → Bob Workflow
 
+<table>
+<tr>
+<td align="center" width="50%">
+  <img src="./images-7.png" alt="Quantum mail capsule from sender to recipient with encrypt sign and authenticate" width="100%"><br/>
+  <sub><b>Message capsule</b> — encrypt, sign, and authenticate before delivery.</sub>
+</td>
+<td align="center" width="50%">
+  <img src="./images-15.png" alt="Alice sends a signed encrypted .zelen container to Bob over a quantum-safe pathway" width="100%"><br/>
+  <sub><b>Alice to Bob</b> — one signed `.zelen` container travels across the secure pathway.</sub>
+</td>
+</tr>
+</table>
+
 ```bash
 # 1. Both generate key pairs
 zelen keys generate --subject alice@example.com --name "Alice" --out alice
@@ -1174,6 +1250,19 @@ services:
 ## ⚙️ &nbsp; GitHub Actions CI
 
 The full cryptographic lifecycle is verified automatically on every push:
+
+<table>
+<tr>
+<td align="center" width="45%">
+  <img src="./images-12.png" alt="Full GitHub Actions proof lifecycle passed" width="82%"><br/>
+  <sub><b>Lifecycle proof</b> — keys, encryption, inspect, sign, verify, decrypt, and tamper test.</sub>
+</td>
+<td align="center" width="55%">
+  <img src="./images-3.png" alt="ZelEn lifecycle rocket passes keys encrypt sign verify decrypt and tamper test" width="100%"><br/>
+  <sub><b>End-to-end gate</b> — the release path only passes when the full crypto lifecycle succeeds.</sub>
+</td>
+</tr>
+</table>
 
 [![Lifecycle](https://img.shields.io/github/actions/workflow/status/rocheston/zelen/zelen-full-lifecycle.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Cryptographic+Lifecycle&color=1565C0)](https://github.com/rocheston/zelen/actions/workflows/zelen-full-lifecycle.yml)
 
@@ -1285,6 +1374,10 @@ graph LR
 
 > *ZelEn is not just a CLI tool — it is the cryptographic enforcement layer baked into the ZelC language compiler. ZelC uses quantum encryption — ML-KEM + ML-DSA — exclusively. RSA and ECC do not exist in ZelC. You cannot write a ZelC program that uses classical cryptography.*
 
+<p align="center">
+  <img src="./images-13.png" alt="ZelC compiler rejects RSA ECC and manual nonce while emitting ZelEn PQ5" width="88%">
+</p>
+
 ```mermaid
 flowchart TD
     subgraph ZELC["⚙️ ZelC Compiler"]
@@ -1357,6 +1450,19 @@ xychart-beta
 
 ## 🔐 &nbsp; Security Architecture
 
+<table>
+<tr>
+<td align="center" width="50%">
+  <img src="./images-19.png" alt="ZelEn fail-closed path authenticates before plaintext release" width="100%"><br/>
+  <sub><b>Authenticate first</b> — no plaintext is released before the container is verified.</sub>
+</td>
+<td align="center" width="50%">
+  <img src="./images-14.png" alt="ZelEn authentication failed after tamper detection before plaintext release" width="100%"><br/>
+  <sub><b>Tamper rejection</b> — corrupted containers fail before partial decrypt is possible.</sub>
+</td>
+</tr>
+</table>
+
 ```mermaid
 graph TB
     subgraph GUARANTEES["Security Guarantees"]
@@ -1385,6 +1491,10 @@ graph TB
 ---
 
 ## 🚀 &nbsp; Quick Start
+
+<p align="center">
+  <img src="./images-2.png" alt="ZelEn shield protecting encrypted archives against harvest-now decrypt-later attacks" width="88%">
+</p>
 
 ```bash
 # macOS ARM64
@@ -1442,7 +1552,7 @@ MIT License — Copyright © 2025 Rocheston / Zelfire
 
 Built with 💛 by Haja Mo
 
-> *The lattice holds. &nbsp; The key is yours.*
+*The lattice holds. &nbsp; The key is yours.*
 
 ⬡ &nbsp; **[zelen.rocheston.com][zelen-site]**
 
@@ -1450,11 +1560,3 @@ Built with 💛 by Haja Mo
 
 <!-- ─── REFERENCE LINKS ─────────────────────────────────────────────────── -->
 [zelen-site]: https://zelen.rocheston.com
-
-<!--
-  ─── HERO BANNER (base64-encoded SVG) ────────────────────────────────────
-  If you prefer cleaner source, save the decoded SVGs as
-  ./assets/hero-dark.svg and ./assets/hero-light.svg and replace the
-  [hero] reference below with a relative path.
--->
-[hero]: data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTIwMCAzNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJaZWxFbiBRdWFudHVtIEVuY3J5cHRpb24iPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMGEwZjFmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMTAxOTM1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFhMTI0NSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ2xvdyIgY3g9IjAuNSIgY3k9IjAuNSIgcj0iMC41NSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyMmQzZWUiIHN0b3Atb3BhY2l0eT0iMC4zNSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iI2E4NTVmNyIgc3RvcC1vcGFjaXR5PSIwLjEwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ0ZXh0IiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2N2U4ZjkiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNhNWI0ZmMiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYzRiNWZkIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyMmQzZWUiIHN0cm9rZS1vcGFjaXR5PSIwLjA2IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogICAgPC9wYXR0ZXJuPgogIDwvZGVmcz4KCiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iMzYwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjM2MCIgZmlsbD0idXJsKCNncmlkKSIvPgogIDxlbGxpcHNlIGN4PSI2MDAiIGN5PSIxODAiIHJ4PSI1NDAiIHJ5PSIyMjAiIGZpbGw9InVybCgjZ2xvdykiLz4KCiAgPCEtLSBsYXR0aWNlIHBvaW50cyBzY2F0dGVyZWQgLS0+CiAgPGcgZmlsbD0iIzIyZDNlZSI+CiAgICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjYwIiByPSIyIiBvcGFjaXR5PSIwLjciLz4KICAgIDxjaXJjbGUgY3g9IjE2MCIgY3k9IjExMCIgcj0iMS41IiBvcGFjaXR5PSIwLjUiLz4KICAgIDxjaXJjbGUgY3g9IjI0MCIgY3k9IjU1IiByPSIyIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxjaXJjbGUgY3g9IjMyMCIgY3k9IjIwMCIgcj0iMS41IiBvcGFjaXR5PSIwLjQiLz4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjI4MCIgcj0iMiIgb3BhY2l0eT0iMC43Ii8+CiAgICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIzMjAiIHI9IjEuNSIgb3BhY2l0eT0iMC41Ii8+CiAgICA8Y2lyY2xlIGN4PSI5ODAiIGN5PSI4MCIgcj0iMiIgb3BhY2l0eT0iMC43Ii8+CiAgICA8Y2lyY2xlIGN4PSIxMDYwIiBjeT0iMTUwIiByPSIxLjUiIG9wYWNpdHk9IjAuNSIvPgogICAgPGNpcmNsZSBjeD0iMTEyMCIgY3k9IjYwIiByPSIyIiBvcGFjaXR5PSIwLjYiLz4KICAgIDxjaXJjbGUgY3g9IjkwMCIgY3k9IjI4MCIgcj0iMiIgb3BhY2l0eT0iMC43Ii8+CiAgICA8Y2lyY2xlIGN4PSIxMDQwIiBjeT0iMzEwIiByPSIxLjUiIG9wYWNpdHk9IjAuNSIvPgogICAgPGNpcmNsZSBjeD0iMTEzMCIgY3k9IjI0MCIgcj0iMiIgb3BhY2l0eT0iMC42Ii8+CiAgPC9nPgoKICA8IS0tIGxhdHRpY2UgY29ubmVjdGlvbnMgLS0+CiAgPGcgc3Ryb2tlPSIjMjJkM2VlIiBzdHJva2Utb3BhY2l0eT0iMC4xOCIgc3Ryb2tlLXdpZHRoPSIwLjciIGZpbGw9Im5vbmUiPgogICAgPGxpbmUgeDE9IjgwIiB5MT0iNjAiIHgyPSIxNjAiIHkyPSIxMTAiLz4KICAgIDxsaW5lIHgxPSIxNjAiIHkxPSIxMTAiIHgyPSIyNDAiIHkyPSI1NSIvPgogICAgPGxpbmUgeDE9IjE2MCIgeTE9IjExMCIgeDI9IjMyMCIgeTI9IjIwMCIvPgogICAgPGxpbmUgeDE9IjEwMCIgeTE9IjI4MCIgeDI9IjIwMCIgeTI9IjMyMCIvPgogICAgPGxpbmUgeDE9IjIwMCIgeTE9IjMyMCIgeDI9IjMyMCIgeTI9IjIwMCIvPgogICAgPGxpbmUgeDE9Ijk4MCIgeTE9IjgwIiB4Mj0iMTA2MCIgeTI9IjE1MCIvPgogICAgPGxpbmUgeDE9IjEwNjAiIHkxPSIxNTAiIHgyPSIxMTIwIiB5Mj0iNjAiLz4KICAgIDxsaW5lIHgxPSI5MDAiIHkxPSIyODAiIHgyPSIxMDQwIiB5Mj0iMzEwIi8+CiAgICA8bGluZSB4MT0iMTA0MCIgeTE9IjMxMCIgeDI9IjExMzAiIHkyPSIyNDAiLz4KICAgIDxsaW5lIHgxPSIxMDYwIiB5MT0iMTUwIiB4Mj0iMTEzMCIgeTI9IjI0MCIvPgogIDwvZz4KCiAgPCEtLSBoZXhhZ29uIGVtYmxlbSBvbiBsZWZ0IC0tPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIyMCwgMTgwKSI+CiAgICA8cG9seWdvbiBwb2ludHM9IjAsLTcyIDYyLC0zNiA2MiwzNiAwLDcyIC02MiwzNiAtNjIsLTM2IgogICAgICAgICAgICAgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ1cmwoI3RleHQpIiBzdHJva2Utd2lkdGg9IjIuNSIgb3BhY2l0eT0iMC45NSIvPgogICAgPHBvbHlnb24gcG9pbnRzPSIwLC01MCA0MywtMjUgNDMsMjUgMCw1MCAtNDMsMjUgLTQzLC0yNSIKICAgICAgICAgICAgIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyZDNlZSIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuNTUiLz4KICAgIDxwb2x5Z29uIHBvaW50cz0iMCwtMjggMjQsLTE0IDI0LDE0IDAsMjggLTI0LDE0IC0yNCwtMTQiCiAgICAgICAgICAgICBmaWxsPSIjMjJkM2VlIiBvcGFjaXR5PSIwLjE4Ii8+CiAgICA8dGV4dCB4PSIwIiB5PSI4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0idWktbW9ub3NwYWNlLCBTRk1vbm8tUmVndWxhciwgTWVubG8sIG1vbm9zcGFjZSIKICAgICAgICAgIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2N2U4ZjkiIGxldHRlci1zcGFjaW5nPSItMSI+4qyhPC90ZXh0PgogIDwvZz4KCiAgPCEtLSBtYWluIHdvcmRtYXJrIC0tPgogIDx0ZXh0IHg9IjY0MCIgeT0iMTcwIiBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCAnU2Vnb2UgVUknLCBSb2JvdG8sIHNhbnMtc2VyaWYiCiAgICAgICAgZm9udC1zaXplPSI5MiIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0idXJsKCN0ZXh0KSIgbGV0dGVyLXNwYWNpbmc9IjYiPlpFTEVOPC90ZXh0PgoKICA8IS0tIHRhZ2xpbmUgLS0+CiAgPHRleHQgeD0iNjQwIiB5PSIyMDgiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLCBzeXN0ZW0tdWksIHNhbnMtc2VyaWYiCiAgICAgICAgZm9udC1zaXplPSIyMCIgZm9udC13ZWlnaHQ9IjUwMCIgZmlsbD0iI2E1YjRmYyIgbGV0dGVyLXNwYWNpbmc9IjkiPlFVQU5UVU0gRU5DUllQVElPTjwvdGV4dD4KCiAgPCEtLSBkaXZpZGVyIGxpbmUgLS0+CiAgPGxpbmUgeDE9IjY0MCIgeTE9IjIzMiIgeDI9IjExMDAiIHkyPSIyMzIiIHN0cm9rZT0iIzQ3NTU2OSIgc3Ryb2tlLXdpZHRoPSIwLjciIG9wYWNpdHk9IjAuNyIvPgoKICA8IS0tIHN0YW5kYXJkcyBzdHJpcCAtLT4KICA8dGV4dCB4PSI2NDAiIHk9IjI2MiIgZm9udC1mYW1pbHk9InVpLW1vbm9zcGFjZSwgU0ZNb25vLVJlZ3VsYXIsIE1lbmxvLCBtb25vc3BhY2UiCiAgICAgICAgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjUwMCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjMiPkZJUFMgMjAzICDCtyAgRklQUyAyMDQgIMK3ICBOSVNUIExFVkVMIDU8L3RleHQ+CiAgPHRleHQgeD0iNjQwIiB5PSIyODYiIGZvbnQtZmFtaWx5PSJ1aS1tb25vc3BhY2UsIFNGTW9uby1SZWd1bGFyLCBNZW5sbywgbW9ub3NwYWNlIgogICAgICAgIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI1MDAiIGZpbGw9IiM2NDc0OGIiIGxldHRlci1zcGFjaW5nPSIzIj5NTC1LRU0tMTAyNCAgwrcgIE1MLURTQS04NyAgwrcgIEFFUy0yNTYtR0NNPC90ZXh0Pgo8L3N2Zz4K
