@@ -102,15 +102,17 @@ jobs:
 
       - name: Sign Encrypted File Container
         run: |
+          echo -n "$ZELEN_PASS" > /tmp/zelen_pass.txt
           docker run --rm --user root \
             -v "${{ github.workspace }}:/data" \
+            -v /tmp/zelen_pass.txt:/tmp/zelen_pass.txt:ro \
             -w /data \
-            -e ZELEN_PASS \
             rocheston/zelen:latest sign \
             --key pipeline.zkey \
-            --passphrase-env ZELEN_PASS \
+            --passphrase-file /tmp/zelen_pass.txt \
             --input top-secret.zelen \
             --out top-secret.zelen.sig
+          rm -f /tmp/zelen_pass.txt
 
       - name: Confirm Signature Exists
         run: |
