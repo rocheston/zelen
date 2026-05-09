@@ -82,7 +82,7 @@ The security of ML-KEM rests on the **Module Learning With Errors** problem. Giv
 
 $$\text{MLWE}_{k,n,q,\chi}: \quad \mathbf{b} = \mathbf{A}\mathbf{s} + \mathbf{e} \pmod{q}$$
 
-where $\mathbf{s}, \mathbf{e} \xleftarrow{\$} \chi^k$ are sampled from a centered binomial distribution $\mathcal{B}_\eta$, and $\mathbf{A} \xleftarrow{\$} \mathcal{R}_q^{k \times k}$ is public.
+where $\mathbf{s}, \mathbf{e} \overset{r}{\leftarrow} \chi^k$ are sampled from a centered binomial distribution $\mathcal{B}_\eta$, and $\mathbf{A} \overset{r}{\leftarrow} \mathcal{R}_q^{k \times k}$ is public.
 
 **Key sizes at ML-KEM-1024 (NIST Level 5):**
 
@@ -301,28 +301,15 @@ Lattice key security:
 
 ### Defence-in-Depth Stack
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  Transport Layer     HTTPS + HSTS + Strict-Transport     │
-├─────────────────────────────────────────────────────────┤
-│  Application Headers CSP · X-Frame-Options · nosniff    │
-├─────────────────────────────────────────────────────────┤
-│  CSRF Protection     HMAC token · hash_equals()         │
-├─────────────────────────────────────────────────────────┤
-│  Rate Limiting       IP-based (SHA-256 hashed) +        │
-│                      session-based dual enforcement      │
-├─────────────────────────────────────────────────────────┤
-│  Input Validation    Extension + MIME type (finfo)      │
-│                      + JSON schema + algorithm allowlist │
-├─────────────────────────────────────────────────────────┤
-│  Key Protection      Argon2id (64MB RAM · 4 passes)     │
-│                      + AES-256-GCM on private key        │
-├─────────────────────────────────────────────────────────┤
-│  Crypto Core         ML-KEM-1024 · ML-DSA-87            │
-│                      AES-256-GCM · HKDF-SHA256           │
-│                      liboqs (OQS C library)              │
-└─────────────────────────────────────────────────────────┘
-```
+| Layer | Protection |
+|-------|------------|
+| 🌐 Transport | HTTPS · HSTS · Strict-Transport-Security |
+| 🛡️ App Headers | CSP · X-Frame-Options: DENY · nosniff |
+| 🔑 CSRF | HMAC token · constant-time `hash_equals()` |
+| 🚦 Rate Limiting | IP-based (SHA-256 hashed) + session-based dual enforcement |
+| 🔍 Input Validation | Extension check · finfo MIME · JSON schema · algorithm allowlist |
+| 🔒 Key Protection | Argon2id (64 MB RAM · 4 passes) + AES-256-GCM encryption |
+| ⬡ Crypto Core | ML-KEM-1024 · ML-DSA-87 · AES-256-GCM · HKDF-SHA256 · liboqs |
 
 ### What ZelEn Never Does
 
